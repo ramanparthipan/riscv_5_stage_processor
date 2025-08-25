@@ -1,8 +1,8 @@
 // instruction memory
 
 module instr_mem #(
-    parameter ADDR_BITS = 8,
-    parameter DATA_BITS = 32
+    parameter ADDR_BITS = 1024,
+    parameter DATA_BITS = 8
 )(
     input logic clk,
     input logic [ADDR_BITS-1:0] addr,

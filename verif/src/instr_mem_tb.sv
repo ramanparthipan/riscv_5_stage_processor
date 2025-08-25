@@ -1,8 +1,8 @@
 `timescale 1ns/1ps
 
 module instr_mem_tb();
-    localparam ADDR_BITS = 10;
-    localparam DATA_BITS = 32;
+    localparam ADDR_BITS = 1024;
+    localparam DATA_BITS = 8;
 
     logic [ADDR_BITS-1:0] instr_addr;
     logic [DATA_BITS-1:0] instr;
