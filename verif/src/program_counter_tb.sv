@@ -2,21 +2,25 @@
 
 module tb_program_counter;
     localparam ADDR_WIDTH = 32;
-    localparam CLK_PERIOD = 10; // 10ns period
+    localparam CLK_PERIOD = 10;
 
     // Signals to connect to the DUT
     logic                clk;
     logic                rst_n;
     logic                en;
+    logic                jump_en;
+    logic [ADDR_WIDTH-1:0] alu_out;
     logic [ADDR_WIDTH-1:0] pc_out;
 
-    // Instantiate the Device Under Test (DUT)
+    // Instantiate DUT
     program_counter #(
         .ADDR_WIDTH(ADDR_WIDTH)
     ) dut (
         .clk(clk),
         .rst_n(rst_n),
         .en(en),
+        .jump_en(jump_en),
+        .alu_out(alu_out),
         .pc_out(pc_out)
     );
 
@@ -28,38 +32,35 @@ module tb_program_counter;
 
     // Monitor to display changes
     initial begin
-        $monitor("Time: %0t | Reset: %b | Enable: %b | PC_Out: %h (%0d)",
-                 $time, rst_n, en, pc_out, pc_out);
+        $monitor("Time: %0t | Rst: %b | En: %b | Jmp: %b | ALU_Out: %h | PC_Out: %h",
+                 $time, rst_n, en, jump_en, alu_out, pc_out);
     end
 
     // Test sequence
     initial begin
         // 1. Assert reset
-        rst_n = 1'b0;
-        en = 1'b0;
+        rst_n = 1'b0; en = 1'b0; jump_en = 1'b0; alu_out = 'x;
         #20;
 
         // 2. De-assert reset and enable counting
-        rst_n = 1'b1;
-        en = 1'b1;
+        rst_n = 1'b1; en = 1'b1;
         @(posedge clk);
-        @(posedge clk);
-        @(posedge clk);
-        @(posedge clk); // PC should now be 16 (0x10)
-        #2 // Give some time so disabling isn't evaluated at this clock cycle
-
-        // 3. Disable counting
-        $display("--- Disabling PC increment ---");
-        en = 1'b0;
-        @(posedge clk);
-        @(posedge clk); // PC should hold its value at 16
+        @(posedge clk); // PC should be 4, then 8
         #2
-        
-        // 4. Re-enable counting
-        $display("--- Re-enabling PC increment ---");
-        en = 1'b1;
-        @(posedge clk);
-        @(posedge clk); // PC should be 20, then 24
+
+        // 3. Test the jump
+        $display("--- Testing Jump ---");
+        jump_en = 1'b1;           // Enable the jump
+        alu_out = 32'hCAFE_BABE;  // Provide a jump target address
+        @(posedge clk);           // On this clock edge, PC should load alu_out
+        #2
+
+        // 4. Disable jump and resume normal increment
+        $display("--- Resuming Increment from Jump Address ---");
+        jump_en = 1'b0;
+        alu_out = 'x;             // Set ALU output to 'x' to show it's not being used
+        @(posedge clk);           // PC should now be CAFE_BABE + 4
+        @(posedge clk);           // PC should be CAFE_BABE + 8
 
         $finish;
     end
