@@ -43,8 +43,8 @@ module register_file (
     end
 
     // --- Combinational Read Logic ---
-    // If the read index is 0, output 0. Otherwise, output the register value.
-    assign reg1_data = (r1_idx == 5'b0) ? 32'b0 : registers[r1_idx];
-    assign reg2_data = (r2_idx == 5'b0) ? 32'b0 : registers[r2_idx];
+    // Allows forwarding from the WB stage
+    assign reg1_data = (r1_idx == wr_idx && wr_en) ? wr_data : registers[r1_idx];
+    assign reg2_data = (r2_idx == wr_idx && wr_en) ? wr_data : registers[r2_idx];
 
 endmodule
