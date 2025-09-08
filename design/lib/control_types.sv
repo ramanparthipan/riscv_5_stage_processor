@@ -30,3 +30,9 @@ typedef enum logic [2:0] {
     BR_EQ, BR_NE, BR_LT, BR_GE, BR_LTU, BR_GEU,
     BR_NOP
 } comp_op_t;
+
+// For Memory operations
+typedef enum logic [3:0] {
+    MEM_SB, MEM_SH, MEM_SW, MEM_LB, MEM_LH, MEM_LW,
+    MEM_LBU, MEM_LHU, MEM_NOP
+} mem_ctrl_t;

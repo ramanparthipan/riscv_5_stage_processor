@@ -15,7 +15,8 @@ module control (
     output reg_wr_src_t reg_wr_src_ctrl,
     output alu_src1_t   alu_op1_ctrl,
     output alu_src2_t   alu_op2_ctrl,
-    output alu_op_t     alu_ctrl
+    output alu_op_t     alu_ctrl,
+    output mem_ctrl_t   mem_ctrl
 );
 
     always_comb begin
@@ -30,6 +31,7 @@ module control (
         alu_op1_ctrl      = SRC1_REG1;
         alu_op2_ctrl      = SRC2_REG2;
         alu_ctrl          = ALU_NOP;
+        mem_ctrl          = MEM_NOP;
 
         // --- Generate signals based on the instruction type ---
         case (opcode_in)
@@ -80,6 +82,13 @@ module control (
                 alu_op2_ctrl      = SRC2_IMM;
                 alu_ctrl          = ALU_ADD; // ALU calculates address
                 reg_wr_src_ctrl   = WRSRC_MEMREAD;
+                case (opcode_in)
+                    LB: mem_ctrl = MEM_LB;
+                    LH: mem_ctrl = MEM_LH;
+                    LW: mem_ctrl = MEM_LW;
+                    LBU: mem_ctrl = MEM_LBU;
+                    LHU: mem_ctrl = MEM_LHU;
+                endcase
             end
 
             // --- S-Type Instructions ---
@@ -88,6 +97,11 @@ module control (
                 alu_op1_ctrl      = SRC1_REG1;
                 alu_op2_ctrl      = SRC2_IMM;
                 alu_ctrl          = ALU_ADD; // ALU calculates address
+                case (opcode_in)
+                    SB: mem_ctrl = MEM_SB;
+                    SH: mem_ctrl = MEM_SH;
+                    SW: mem_ctrl = MEM_SW;
+                endcase
             end
 
             // --- B-Type Instructions ---

@@ -18,6 +18,7 @@ module control_tb;
     alu_src1_t   alu_op1_ctrl;
     alu_src2_t   alu_op2_ctrl;
     alu_op_t     alu_ctrl;
+    mem_ctrl_t   mem_ctrl;
 
     // --- Instantiate the Device Under Test (DUT) ---
     control dut (.*); // Connects ports by name
@@ -41,7 +42,8 @@ module control_tb;
         input logic         exp_mem_read,  input logic         exp_branch,
         input logic         exp_jump,      input comp_op_t     exp_comp,
         input reg_wr_src_t  exp_wr_src,    input alu_src1_t    exp_alu1,
-        input alu_src2_t    exp_alu2,      input alu_op_t      exp_alu_op
+        input alu_src2_t    exp_alu2,      input alu_op_t      exp_alu_op,
+        input mem_ctrl_t    exp_mem_ctrl
     );
         opcode_in = test_op;
         #1; // Wait for combinatorial logic to settle
@@ -56,6 +58,7 @@ module control_tb;
         assert (alu_op1_ctrl      == exp_alu1)      else $error("AluSrc1 FAIL for %s", opcode_to_string(test_op));
         assert (alu_op2_ctrl      == exp_alu2)      else $error("AluSrc2 FAIL for %s", opcode_to_string(test_op));
         assert (alu_ctrl          == exp_alu_op)    else $error("AluOp FAIL for %s", opcode_to_string(test_op));
+        assert (mem_ctrl          == exp_mem_ctrl)  else $error("MemCtrl FAIL for %s", opcode_to_string(test_op));
 
         $display("PASS: Correct control signals for %s", opcode_to_string(test_op));
     endtask
@@ -65,15 +68,15 @@ module control_tb;
     initial begin
         $display("--- Starting Control Unit Test ---");
 
-        //                 test_op|WrR|WrM|RdM|Br |Jmp|Comp   |WrSrc        |Alu1     |Alu2     |AluOp
-        check_signals(ADD,   1,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_REG2, ALU_ADD);
-        check_signals(ADDI,  1,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_IMM,  ALU_ADD);
-        check_signals(LW,    1,  0,  1,  0,  0,  BR_NOP, WRSRC_MEMREAD,SRC1_REG1, SRC2_IMM,  ALU_ADD);
-        check_signals(SW,    0,  1,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_IMM,  ALU_ADD);
-        check_signals(BEQ,   0,  0,  0,  1,  0,  BR_EQ,  WRSRC_ALURES, SRC1_PC,   SRC2_IMM,  ALU_ADD);
-        check_signals(JAL,   1,  0,  0,  0,  1,  BR_NOP, WRSRC_PC4,    SRC1_PC,   SRC2_IMM,  ALU_ADD);
-        check_signals(LUI,   1,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_IMM,  ALU_LUI); // AluSrc1 is don't-care, REG1 is default
-        check_signals(NOP,   0,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_REG2, ALU_NOP);
+        //           test_op|WrR|WrM|RdM|Br |Jmp|Comp   |WrSrc        |Alu1      |Alu2       |AluOp  |MemCtrl
+        check_signals(ADD,   1,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_REG2, ALU_ADD, MEM_NOP);
+        check_signals(ADDI,  1,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_IMM,  ALU_ADD, MEM_NOP);
+        check_signals(LW,    1,  0,  1,  0,  0,  BR_NOP, WRSRC_MEMREAD,SRC1_REG1, SRC2_IMM,  ALU_ADD, MEM_LW);
+        check_signals(SW,    0,  1,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_IMM,  ALU_ADD, MEM_SW);
+        check_signals(BEQ,   0,  0,  0,  1,  0,  BR_EQ,  WRSRC_ALURES, SRC1_PC,   SRC2_IMM,  ALU_ADD, MEM_NOP);
+        check_signals(JAL,   1,  0,  0,  0,  1,  BR_NOP, WRSRC_PC4,    SRC1_PC,   SRC2_IMM,  ALU_ADD, MEM_NOP);
+        check_signals(LUI,   1,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_IMM,  ALU_LUI, MEM_NOP); // AluSrc1 is don't-care, REG1 is default
+        check_signals(NOP,   0,  0,  0,  0,  0,  BR_NOP, WRSRC_ALURES, SRC1_REG1, SRC2_REG2, ALU_NOP, MEM_NOP);
 
         $display("--- Test Finished ---");
         $finish;
