@@ -7,18 +7,18 @@ module control_tb;
     `include "control_types.sv" // Contains the control signal enums
 
     // --- Signals ---
-    opcode_out_t opcode_in;
-    logic        reg_do_write_ctrl;
-    logic        mem_do_write_ctrl;
-    logic        mem_do_read_ctrl;
-    logic        do_branch;
-    logic        do_jump;
-    comp_op_t    comp_ctrl;
-    reg_wr_src_t reg_wr_src_ctrl;
-    alu_src1_t   alu_op1_ctrl;
-    alu_src2_t   alu_op2_ctrl;
-    alu_op_t     alu_ctrl;
-    mem_ctrl_t   mem_ctrl;
+    opcode_out_t    opcode_in;
+    logic           reg_do_write_ctrl;
+    logic           mem_do_write_ctrl;
+    logic           mem_do_read_ctrl;
+    logic           do_branch;
+    logic           do_jump;
+    comp_op_t       comp_ctrl;
+    reg_wr_src_t    reg_wr_src_ctrl;
+    alu_src1_t      alu_op1_ctrl;
+    alu_src2_t      alu_op2_ctrl;
+    alu_op_t        alu_ctrl;
+    mem_op_t        mem_ctrl;
 
     // --- Instantiate the Device Under Test (DUT) ---
     control dut (.*); // Connects ports by name
@@ -43,7 +43,7 @@ module control_tb;
         input logic         exp_jump,      input comp_op_t     exp_comp,
         input reg_wr_src_t  exp_wr_src,    input alu_src1_t    exp_alu1,
         input alu_src2_t    exp_alu2,      input alu_op_t      exp_alu_op,
-        input mem_ctrl_t    exp_mem_ctrl
+        input mem_op_t      exp_mem_ctrl
     );
         opcode_in = test_op;
         #1; // Wait for combinatorial logic to settle

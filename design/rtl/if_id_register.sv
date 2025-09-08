@@ -3,7 +3,7 @@
 //
 module if_id_register (
     input wire clk,          // Clock
-    input wire rst_n,        // Asynchronous active-low reset
+    input wire resetn,        // Asynchronous active-low reset
     input wire enable,      // Register enable signal
 
     // Inputs from IF Stage
@@ -17,8 +17,8 @@ module if_id_register (
     output reg [31:0] pc_plus4_id
 );
 
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or negedge resetn) begin
+        if (!resetn) begin
             // Asynchronous reset has the highest priority
             instr_id    <= 32'b0;
             pc_id       <= 32'b0;

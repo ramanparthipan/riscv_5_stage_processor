@@ -16,7 +16,7 @@ module control (
     output alu_src1_t   alu_op1_ctrl,
     output alu_src2_t   alu_op2_ctrl,
     output alu_op_t     alu_ctrl,
-    output mem_ctrl_t   mem_ctrl
+    output mem_op_t     mem_ctrl
 );
 
     always_comb begin
@@ -83,11 +83,11 @@ module control (
                 alu_ctrl          = ALU_ADD; // ALU calculates address
                 reg_wr_src_ctrl   = WRSRC_MEMREAD;
                 case (opcode_in)
-                    LB: mem_ctrl = MEM_LB;
-                    LH: mem_ctrl = MEM_LH;
-                    LW: mem_ctrl = MEM_LW;
-                    LBU: mem_ctrl = MEM_LBU;
-                    LHU: mem_ctrl = MEM_LHU;
+                    LB:     mem_ctrl = MEM_LB;
+                    LH:     mem_ctrl = MEM_LH;
+                    LW:     mem_ctrl = MEM_LW;
+                    LBU:    mem_ctrl = MEM_LBU;
+                    LHU:    mem_ctrl = MEM_LHU;
                 endcase
             end
 

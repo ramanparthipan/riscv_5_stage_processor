@@ -19,20 +19,21 @@ typedef enum logic {
 
 // For the ALU's operation control
 typedef enum logic [3:0] {
+    ALU_NOP,
     ALU_ADD, ALU_SUB, ALU_XOR, ALU_OR, ALU_AND,
     ALU_SL, ALU_SRL, ALU_SRA, ALU_LT, ALU_LTU,
-    ALU_LUI,
-    ALU_NOP
+    ALU_LUI
 } alu_op_t;
 
 // For the Branch comparison unit
 typedef enum logic [2:0] {
-    BR_EQ, BR_NE, BR_LT, BR_GE, BR_LTU, BR_GEU,
-    BR_NOP
+    BR_NOP,
+    BR_EQ, BR_NE, BR_LT, BR_GE, BR_LTU, BR_GEU
 } comp_op_t;
 
 // For Memory operations
 typedef enum logic [3:0] {
+    MEM_NOP,
     MEM_SB, MEM_SH, MEM_SW, MEM_LB, MEM_LH, MEM_LW,
-    MEM_LBU, MEM_LHU, MEM_NOP
-} mem_ctrl_t;
+    MEM_LBU, MEM_LHU 
+} mem_op_t;
