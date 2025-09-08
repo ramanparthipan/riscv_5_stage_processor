@@ -3,7 +3,7 @@
 
 module id_ex_register(
     input logic         clk,
-    input logic         resetn,
+    input logic         clear,
     input logic         enable,
     
     input logic         reg_do_write_ctrl_id, // Control unit
@@ -49,28 +49,28 @@ module id_ex_register(
     output logic [4:0]  wr_reg_idx_ex
 );
 
-always @(posedge clk or negedge resetn) begin
-    if (!resetn) begin
-        reg_do_write_ctrl_id    <= 0; 
-        mem_do_write_ctrl_id    <= 0;
-        mem_do_read_ctrl_id     <= 0;
-        do_branch_id            <= 0;
-        do_jump_id              <= 0;
-        comp_ctrl_id            <= BR_NOP;
-        reg_wr_src_ctrl_id      <= 0;
-        alu_op1_ctrl_id         <= 0;
-        alu_op2_ctrl_id         <= 0;         
-        alu_ctrl_id             <= ALU_NOP;
-        mem_ctrl_id             <= MEM_NOP;
-        pc_plus4_id             <= 0;
-        pc_id                   <= 0;
-        reg1_data_id            <= 0;
-        reg2_data_id            <= 0;
-        imm_out_id              <= 0;
-        opcode_out_id           <= 0;
-        r1_reg_idx_id           <= 0;
-        r2_reg_idx_id           <= 0;
-        wr_reg_idx_id           <= 0;
+always @(posedge clk) begin
+    if (clear) begin
+        reg_do_write_ctrl_ex    <= 0; 
+        mem_do_write_ctrl_ex    <= 0;
+        mem_do_read_ctrl_ex     <= 0;
+        do_branch_ex            <= 0;
+        do_jump_ex              <= 0;
+        comp_ctrl_ex            <= BR_NOP;
+        reg_wr_src_ctrl_ex      <= 0;
+        alu_op1_ctrl_ex         <= 0;
+        alu_op2_ctrl_ex         <= 0;         
+        alu_ctrl_ex             <= ALU_NOP;
+        mem_ctrl_ex             <= MEM_NOP;
+        pc_plus4_ex             <= 0;
+        pc_ex                   <= 0;
+        reg1_data_ex            <= 0;
+        reg2_data_ex            <= 0;
+        imm_out_ex              <= 0;
+        opcode_out_ex           <= 0;
+        r1_reg_idx_ex           <= 0;
+        r2_reg_idx_ex           <= 0;
+        wr_reg_idx_ex           <= 0;
     end else if (enable) begin
         reg_do_write_ctrl_ex    <= reg_do_write_ctrl_id; 
         mem_do_write_ctrl_ex    <= mem_do_write_ctrl_id;
