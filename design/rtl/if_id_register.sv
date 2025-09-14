@@ -1,9 +1,6 @@
-//
-// IF/ID Pipeline Register with Enable
-//
 module if_id_register (
     input wire clk,          // Clock
-    input wire clear,        // Asynchronous active-low reset
+    input wire clear,        // Synchronous clear
     input wire enable,      // Register enable signal
 
     // Inputs from IF Stage
