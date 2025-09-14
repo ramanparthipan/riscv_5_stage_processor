@@ -9,6 +9,7 @@ module hazard_unit_tb;
     logic          ex_do_mem_read_en;
 
     logic          hazardFEEnable;
+    logic          hazardIFIDClear;
     logic          hazardIDEXClear;
 
     // Instantiate DUT
@@ -23,7 +24,7 @@ module hazard_unit_tb;
         opcode_in = ADD; id_reg1_idx = 1; id_reg2_idx = 2;
         ex_reg_wr_idx = 3; ex_do_mem_read_en = 0;
         #1;
-        assert (hazardIDEXClear == 0 && hazardFEEnable == 1)
+        assert (hazardIDEXClear == 0 && hazardFEEnable == 1 && hazardIFIDClear == 0)
             $display("PASS: No hazard detected correctly.");
         else
             $error("FAIL: Incorrect signals for no-hazard case.");
@@ -34,11 +35,20 @@ module hazard_unit_tb;
         opcode_in = ADD; id_reg1_idx = 5; id_reg2_idx = 2; // ID stage needs x5
         ex_reg_wr_idx = 5; ex_do_mem_read_en = 1;         // EX stage is a load to x5
         #1;
-        assert (hazardIDEXClear == 1 && hazardFEEnable == 0)
+        assert (hazardIDEXClear == 1 && hazardFEEnable == 0 && hazardIFIDClear == 0)
             $display("PASS: Load-use hazard detected correctly.");
         else
             $error("FAIL: Incorrect signals for load-use case.");
 
+        // Scenario 3: Control Hazard (Branch in ID)
+        $display("\n--- Testing Control Hazard ---");
+        opcode_in = BEQ; // A branch instruction is now in the ID stage
+        ex_do_mem_read_en = 0; // No load-use hazard
+        #1;
+        assert (hazardIDEXClear == 0 && hazardIFIDClear == 1 && hazardFEEnable == 0)
+            $display("PASS: Control hazard (branch) detected correctly.");
+        else
+            $error("FAIL: Incorrect signals for control hazard case.");
 
         $display("\n--- Hazard Unit Test Finished ---");
         $finish;
