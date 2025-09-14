@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 `include "control_types.sv"
 
 module alu (

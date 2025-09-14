@@ -37,3 +37,9 @@ typedef enum logic [3:0] {
     MEM_SB, MEM_SH, MEM_SW, MEM_LB, MEM_LH, MEM_LW,
     MEM_LBU, MEM_LHU 
 } mem_op_t;
+
+typedef enum logic [1:0] {
+    FWD_SRC_ID,
+    FWD_SRC_MEM,
+    FWD_SRC_WB
+} forwarding_src_t;
