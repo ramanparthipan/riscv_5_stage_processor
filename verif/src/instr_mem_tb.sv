@@ -1,19 +1,14 @@
 `timescale 1ns/1ps
 
 module instr_mem_tb();
-    localparam ADDR_BITS = 1024;
-    localparam DATA_BITS = 8;
+    localparam INSTR_MEM_SIZE_BYTES = 1024;
 
-    logic [ADDR_BITS-1:0] instr_addr;
-    logic [DATA_BITS-1:0] instr;
     logic clk;
+    logic [31:0] addr;
+    logic [31:0] instr;
 
 
-    instr_mem #(.ADDR_BITS(ADDR_BITS), .DATA_BITS(DATA_BITS)) dut(
-        .clk(clk),
-        .addr(instr_addr),
-        .data(instr)
-    );
+    instr_mem #(.INSTR_MEM_SIZE_BYTES(INSTR_MEM_SIZE_BYTES)) dut(.*);
 
     // generate clock signal
     initial begin
@@ -27,13 +22,13 @@ module instr_mem_tb();
     initial begin
         $readmemh("verif/src/program.hex", dut.mem);
 
-        instr_addr = 'h0;
+        addr = 'h0;
         #20
         $display($sformatf("Retrieved instruction, %h", instr));
-        instr_addr = 'h1;
+        addr = 'h4;
         #20
         $display($sformatf("Retrieved instruction, %h", instr));
-        instr_addr = 'h2;
+        addr = 'h8;
         #20
         $display($sformatf("Retrieved instruction, %h", instr));
 
