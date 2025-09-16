@@ -6,10 +6,10 @@ module tb_program_counter;
 
     // Signals to connect to the DUT
     logic                clk;
-    logic                rst_n;
+    logic                resetn;
     logic                en;
     logic                jump_en;
-    logic [ADDR_WIDTH-1:0] alu_out;
+    logic [ADDR_WIDTH-1:0] jump_addr;
     logic [ADDR_WIDTH-1:0] pc_out;
 
     // Instantiate DUT
@@ -17,10 +17,10 @@ module tb_program_counter;
         .ADDR_WIDTH(ADDR_WIDTH)
     ) dut (
         .clk(clk),
-        .rst_n(rst_n),
+        .resetn(resetn),
         .en(en),
         .jump_en(jump_en),
-        .alu_out(alu_out),
+        .jump_addr(jump_addr),
         .pc_out(pc_out)
     );
 
@@ -32,18 +32,18 @@ module tb_program_counter;
 
     // Monitor to display changes
     initial begin
-        $monitor("Time: %0t | Rst: %b | En: %b | Jmp: %b | ALU_Out: %h | PC_Out: %h",
-                 $time, rst_n, en, jump_en, alu_out, pc_out);
+        $monitor("Time: %0t | Rst: %b | En: %b | Jmp: %b | jump_addr: %h | PC_Out: %h",
+                 $time, resetn, en, jump_en, jump_addr, pc_out);
     end
 
     // Test sequence
     initial begin
         // 1. Assert reset
-        rst_n = 1'b0; en = 1'b0; jump_en = 1'b0; alu_out = 'x;
+        resetn = 1'b0; en = 1'b0; jump_en = 1'b0; jump_addr = 'x;
         #20;
 
         // 2. De-assert reset and enable counting
-        rst_n = 1'b1; en = 1'b1;
+        resetn = 1'b1; en = 1'b1;
         @(posedge clk);
         @(posedge clk); // PC should be 4, then 8
         #2
@@ -51,14 +51,14 @@ module tb_program_counter;
         // 3. Test the jump
         $display("--- Testing Jump ---");
         jump_en = 1'b1;           // Enable the jump
-        alu_out = 32'hCAFE_BABE;  // Provide a jump target address
-        @(posedge clk);           // On this clock edge, PC should load alu_out
+        jump_addr = 32'hCAFE_BABE;  // Provide a jump target address
+        @(posedge clk);           // On this clock edge, PC should load jump_addr
         #2
 
         // 4. Disable jump and resume normal increment
         $display("--- Resuming Increment from Jump Address ---");
         jump_en = 1'b0;
-        alu_out = 'x;             // Set ALU output to 'x' to show it's not being used
+        jump_addr = 'x;             // Set ALU output to 'x' to show it's not being used
         @(posedge clk);           // PC should now be CAFE_BABE + 4
         @(posedge clk);           // PC should be CAFE_BABE + 8
 
