@@ -11,9 +11,9 @@ module hazard_unit (
     input  logic          ex_do_mem_read_en,
 
     // Outputs to control the pipeline
-    output logic          hazardFEEnable,     // To PC and IF/ID enable
-    output logic          hazardIFIDClear,    // To IF/ID clear
-    output logic          hazardIDEXClear    // To ID/EX clear
+    output logic          hazard_fe_enable,     // To PC and IF/ID enable
+    output logic          hazard_if_id_clear,    // To IF/ID clear
+    output logic          hazard_id_ex_clear    // To ID/EX clear
 );
 
     // Load-Use Hazard: occurs if the instruction in EX is a memory read (like lw)
@@ -31,12 +31,12 @@ module hazard_unit (
     end
 
     // The ID/EX register is cleared (a bubble is inserted) for a load-use hazard.
-    assign hazardIDEXClear = load_use_hazard;
+    assign hazard_id_ex_clear = load_use_hazard;
 
     // The IF/ID register is cleared if a PC jump is detected.
-    assign hazardIFIDClear = pc_jump_hazard;
+    assign hazard_if_id_clear = pc_jump_hazard;
 
     // The front-end of the pipeline (PC and IF/ID) is stalled if any hazard is detected.
-    assign hazardFEEnable = !(load_use_hazard || pc_jump_hazard);
+    assign hazard_fe_enable = !(load_use_hazard || pc_jump_hazard);
 
 endmodule

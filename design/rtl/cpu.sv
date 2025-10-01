@@ -1,3 +1,6 @@
+`include "opcodes.sv"
+`include "control_types.sv"
+
 module cpu #(
     parameter INSTR_MEM_SIZE_BYTES = 1024,
     parameter MEM_SIZE_BYTES = 1024
@@ -6,35 +9,91 @@ module cpu #(
     input   logic           resetn,
 
     output  logic [31:0]    pc_out, // to instr_mem
-    input   logic [31:0]    instr,
+    input   logic [31:0]    instr_if,
 
-    output  logic           clk, // to data_memory
-    output  logic           wr_en,
-    output  mem_op_t        mem_ctrl,
-    output  logic [31:0]    addr,
-    output  logic [31:0]    mem_data_in,
-    input   logic [31:0]    mem_data_out
+    output                  mem_wr_en, // to data_memory
+    output mem_op_t         mem_op,
+    output logic [31:0]     mem_addr,
+    output logic [31:0]     mem_data_in,
+    input logic [31:0]      mem_data_out
 );
 
     // IF stage
-    wire                pc_enable;       // Enable for normal increment
-    wire                pc_jump_enable;  // Enable for a jump
-    wire [31:0]         pc_jump_addr;  // Jump target address from ALU
-    wire                if_id_enable;
-    wire                fe_enable;
+    wire                pc_jump_enable;     // Enable for a jump
+    wire [31:0]         pc_jump_addr;       // Jump target address from ALU
+    wire                if_id_clear;        // Clear for IF/ID pipeline register, from Hazard Unit
+    wire                fe_enable;          // Enable for IF stage (PC and IF/ID pipeline register)
 
     // ID stage
-    wire [31:0]         instr_id;
-    wire [31:0]         pc_id;
-    wire [31:0]         pc_plus4_id;
+    wire [31:0]         instr_id;           // Instruction signal in ID stage
+    wire [31:0]         pc_id;              // Propagated PC value through ID stage
+    wire [31:0]         pc_plus4_id;        // Propagated PC+4 value through ID stage
+    wire opcode_out_t   opcode_id;          // Opcode outputted from Decode unit
+    wire comp_op_t      comp_ctrl_id;
+    wire reg_wr_src_t   reg_wr_src_ctrl_id;
+    wire alu_op_t       alu_ctrl_id;
+    wire mem_op_t       mem_ctrl_id;
+    wire [4:0]          wr_reg_idx_id;      // Write address to the Register File, originating from WB stage
+    wire [4:0]          r1_reg_idx_id;      // Read address 1 from Register File
+    wire [4:0]          r2_reg_idx_id;      // Read address 2 from Register File
+    wire [31:0]         reg1_data_id;       // Read data 1 from Register File
+    wire [31:0]         reg2_data_id;       // Read data 2 from Register File
+    wire                reg_wr_en;          // Write enable for Register File
+    wire [4:0]          reg_wr_idx;         // Write address for Register File
+    wire [31:0]         reg_wr_data;        // Write data for Register File
+    wire [31:0]         imm_id;             // Immediate value outputted from Immediate Generator
+    wire                id_ex_clear;        // Clear for ID/EX pipeline register, from Hazard Unit
+
+    // EX stage
+    wire                    reg_do_write_ctrl_ex;
+    wire                    mem_do_write_ctrl_ex;
+    wire                    mem_do_read_ctrl_ex;
+    wire                    do_branch_ex;
+    wire                    do_jump_ex;
+    wire comp_op_t          comp_ctrl_ex;
+    wire reg_wr_src_t       reg_wr_src_ctrl_ex;
+    wire alu_src1_t         alu_op1_ctrl_ex;
+    wire alu_src2_t         alu_op2_ctrl_ex;
+    wire alu_op_t           alu_ctrl_ex;
+    wire mem_op_t           mem_ctrl_ex;
+    wire [31:0]             pc_plus4_ex;
+    wire [31:0]             pc_ex;
+    wire [31:0]             reg1_data_ex;
+    wire [31:0]             reg2_data_ex;
+    wire [31:0]             imm_ex;
+    wire opcode_out_t       opcode_ex;
+    wire [4:0]              r1_reg_idx_ex;
+    wire [4:0]              r2_reg_idx_ex;
+    wire [4:0]              wr_reg_idx_ex;
+    wire forwarding_src_t   alu_reg1_forwarding_ctrl;
+    wire forwarding_src_t   alu_reg2_forwarding_ctrl;
+    wire [31:0]             reg1_src;
+    wire [31:0]             reg2_src;
+    wire [31:0]             alu_op1;
+    wire [31:0]             alu_op2;
+    wire [31:0]             alu_result_ex;
+    wire                    branch_taken;
+
+    // MEM stage
+    wire                    reg_do_write_ctrl_mem;
+    wire reg_wr_src_t       reg_wr_src_ctrl_mem;
+    wire [31:0]             pc_plus4_mem;
+    wire [31:0]             alu_result_mem;
+    wire [4:0]              wr_reg_idx_mem;
+
+    // WB stage
+    wire reg_wr_src_t       reg_wr_src_ctrl_wb;
+    wire [31:0]             pc_plus4_wb;
+    wire [31:0]             alu_result_wb;
+    wire [31:0]             mem_data_out_wb;
 
 
     program_counter program_counter_h(
         .clk(clk),
         .resetn(resetn),
-        .en(pc_enable),
+        .en(fe_enable),
         .jump_en(pc_jump_enable),
-        .jump_addr(pc_jump_addr),
+        .jump_addr(alu_result_ex),
         .pc_out(pc_out)
     );
 
@@ -43,16 +102,228 @@ module cpu #(
 
     if_id_register if_id_register_h(
         .clk(clk),
-        .clear(if_id_enable),
+        .clear(if_id_clear),
         .enable(fe_enable),
-        .instr_if(instr),
+
+        .instr_if(instr_if),
         .pc_if(pc_out),
         .pc_plus4_if(pc_plus4),
+
         .instr_id(instr_id),
         .pc_id(pc_id),
         .pc_plus4_id(pc_plus4_id)
     );
 
+    decode decode_h(
+        .instr(instr_id),
+        .opcode_out(opcode_id),
+        .wr_reg_idx(wr_reg_idx_id),
+        .r1_reg_idx(r1_reg_idx_id),
+        .r2_reg_idx(r2_reg_idx_id)
+    );
 
+    control control_h(
+        .opcode_in(opcode_id),
+        .reg_do_write_ctrl(reg_do_write_ctrl_id),
+        .mem_do_write_ctrl(mem_do_write_ctrl_id),
+        .mem_do_read_ctrl(mem_do_read_ctrl_id),
+        .do_branch(do_branch_id),
+        .do_jump(do_jump_id),
+        .comp_ctrl(comp_ctrl_id),
+        .reg_wr_src_ctrl(reg_wr_src_ctrl_id),
+        .alu_op1_ctrl(alu_op1_ctrl_id),
+        .alu_op2_ctrl(alu_op2_ctrl_id),
+        .alu_ctrl(alu_ctrl_id),
+        .mem_ctrl(mem_ctrl_id)
+    );
+
+    register_file register_file_h(
+        .clk(clk),
+        .rst_n(resetn),
+        .r1_idx(r1_reg_idx_id),
+        .r2_idx(r2_reg_idx_id),
+        .reg1_data(reg1_data_id),
+        .reg2_data(reg2_data_id),
+        .wr_en(reg_wr_en),
+        .wr_idx(reg_wr_idx),
+        .wr_data(reg_wr_data)
+    );
+
+    immediate_generator immediate_generator_h(
+        .opcode_in(opcode_id),
+        .instr_in(instr_id),
+        .imm_out(imm_id)
+    );
+
+    id_ex_register id_ex_register_h(
+        .clk(clk),
+        .clear(id_ex_clear),
+        .enable(1'b1),
+
+        .reg_do_write_ctrl_id(reg_do_write_ctrl_id),
+        .mem_do_write_ctrl_id(mem_do_write_ctrl_id),
+        .mem_do_read_ctrl_id(mem_do_read_ctrl_id),
+        .do_branch_id(do_branch_id),
+        .do_jump_id(do_jump_id),
+        .comp_ctrl_id(comp_ctrl_id),
+        .reg_wr_src_ctrl_id(reg_wr_src_ctrl_id),
+        .alu_op1_ctrl_id(alu_op1_ctrl_id),
+        .alu_op2_ctrl_id(alu_op2_ctrl_id),
+        .alu_ctrl_id(alu_ctrl_id),
+        .mem_ctrl_id(mem_ctrl_id),
+        .pc_plus4_id(pc_plus4_id),
+        .pc_id(pc_id),
+        .reg1_data_id(reg1_data_id),
+        .reg2_data_id(reg2_data_id),
+        .imm_out_id(imm_id),
+        .opcode_out_id(opcode_id),
+        .r1_reg_idx_id(r1_reg_idx_id),
+        .r2_reg_idx_id(r2_reg_idx_id),
+        .wr_reg_idx_id(wr_reg_idx_id),
+
+        .reg_do_write_ctrl_ex(reg_do_write_ctrl_ex),
+        .mem_do_write_ctrl_ex(mem_do_write_ctrl_ex),
+        .mem_do_read_ctrl_ex(mem_do_read_ctrl_ex),
+        .do_branch_ex(do_branch_ex),
+        .do_jump_ex(do_jump_ex),
+        .comp_ctrl_ex(comp_ctrl_ex),
+        .reg_wr_src_ctrl_ex(reg_wr_src_ctrl_ex),
+        .alu_op1_ctrl_ex(alu_op1_ctrl_ex),
+        .alu_op2_ctrl_ex(alu_op2_ctrl_ex),
+        .alu_ctrl_ex(alu_ctrl_ex),
+        .mem_ctrl_ex(mem_ctrl_ex),
+        .pc_plus4_ex(pc_plus4_ex),
+        .pc_ex(pc_ex),
+        .reg1_data_ex(reg1_data_ex),
+        .reg2_data_ex(reg2_data_ex),
+        .imm_out_ex(imm_ex),
+        .opcode_out_ex(opcode_ex),
+        .r1_reg_idx_ex(r1_reg_idx_ex),
+        .r2_reg_idx_ex(r2_reg_idx_ex),
+        .wr_reg_idx_ex(wr_reg_idx_ex)
+    );
+
+    // Port order according to forwarding_src_t enum
+    mux_3_to_1 reg1_src_sel_3_to_1(
+        .sel(alu_reg1_forwarding_ctrl),
+        .a(reg1_data_ex),
+        .b(alu_result_mem),
+        .c(reg_wr_data),
+        .z(reg1_src)
+    );
+
+    // Port order according to alu_src1_t enum
+    mux_2_to_1 alu_op1_sel_2_to_1(
+        .sel(alu_op1_ctrl_ex),
+        .a(reg1_src),
+        .b(pc_ex),
+        .z(alu_op1)
+    );
+
+    // Port order according to forwarding_src_t enum
+    mux_3_to_1 reg2_src_sel_3_to_1(
+        .sel(alu_reg2_forwarding_ctrl),
+        .a(reg2_data_ex),
+        .b(alu_result_mem),
+        .c(reg_wr_data),
+        .z(reg2_src)
+    );
+
+    // Port order according to alu_src2_t enum
+    mux_2_to_1 alu_op2_sel_2_to_1(
+        .sel(alu_op2_ctrl_ex),
+        .a(reg2_src),
+        .b(imm_ex),
+        .z(alu_op2)
+    );
+
+    alu alu_h(
+        .operand_a(alu_op1),
+        .operand_b(alu_op2),
+        .alu_op(alu_ctrl_ex),
+        .result(alu_result_ex)
+    );
+
+    branch branch_h(
+        .operand_a(reg1_src),
+        .operand_b(reg2_src),
+        .comp_op(comp_ctrl_ex),
+        .result(branch_taken)
+    );
+
+    assign pc_jump_enable = (do_branch_ex & branch_taken) | do_jump_ex;
+
+    forwarding_unit forwarding_unit_h(
+        .ex_reg1_idx(r1_reg_idx_ex),
+        .ex_reg2_idx(r2_reg_idx_ex),
+        .mem_reg_wr_idx(wr_reg_idx_mem),
+        .mem_reg_wr_en(reg_do_write_ctrl_mem),
+        .wb_reg_wr_idx(reg_wr_idx),
+        .wb_reg_wr_en(reg_wr_en),
+        .alu_reg1_forwarding_ctrl(alu_reg1_forwarding_ctrl),
+        .alu_reg2_forwarding_ctrl(alu_reg2_forwarding_ctrl)
+    );
+
+    hazard_unit hazard_unit_h(
+        .opcode_in(opcode_id),
+        .id_reg1_idx(r1_reg_idx_id),
+        .id_reg2_idx(r2_reg_idx_id),
+        .ex_reg_wr_idx(wr_reg_idx_ex),
+        .ex_do_mem_read_en(mem_do_read_ctrl_ex),
+        .hazard_fe_enable(fe_enable),
+        .hazard_if_id_clear(if_id_clear),
+        .hazard_id_ex_clear(id_ex_clear)
+    );
+
+    ex_mem_register ex_mem_register_h(
+        .clk(clk),
+        .clear(1'b0),
+        .enable(1'b1),
+        .reg_do_write_ctrl_ex(reg_do_write_ctrl_ex),
+        .reg_wr_src_ctrl_ex(reg_wr_src_ctrl_ex),
+        .mem_do_write_ctrl_ex(mem_do_write_ctrl_ex),
+        .mem_ctrl_ex(mem_ctrl_ex),
+        .pc_plus4_ex(pc_plus4_ex),
+        .alu_result_ex(alu_result_ex),
+        .mem_data_in_ex(reg2_src),
+        .wr_reg_idx_ex(wr_reg_idx_ex),
+        .reg_do_write_ctrl_mem(reg_do_write_ctrl_mem),
+        .reg_wr_src_ctrl_mem(reg_wr_src_ctrl_mem),
+        .mem_do_write_ctrl_mem(mem_wr_en),
+        .mem_ctrl_mem(mem_op),
+        .pc_plus4_mem(pc_plus4_mem),
+        .alu_result_mem(alu_result_mem),
+        .mem_data_in_mem(mem_data_in),
+        .wr_reg_idx_mem(wr_reg_idx_mem)
+    );
+
+    assign mem_addr = alu_result_mem;
+
+    mem_wb_register mem_wb_register_h(
+        .clk(clk),
+        .clear(1'b0),
+        .enable(1'b1),
+        .reg_do_write_ctrl_mem(reg_do_write_ctrl_mem),
+        .reg_wr_src_ctrl_mem(reg_wr_src_ctrl_mem),
+        .pc_plus4_mem(pc_plus4_mem),
+        .alu_result_mem(alu_result_mem),
+        .mem_data_out_mem(mem_data_out),
+        .wr_reg_idx_mem(wr_reg_idx_mem),
+        .reg_do_write_ctrl_wb(reg_wr_en),
+        .reg_wr_src_ctrl_wb(reg_wr_src_ctrl_wb),
+        .pc_plus4_wb(pc_plus4_wb),
+        .alu_result_wb(alu_result_wb),
+        .mem_data_out_wb(mem_data_out_wb),
+        .wr_reg_idx_wb(reg_wr_idx)
+    );
+
+    // Port order according to reg_wr_src_t enum
+    mux_3_to_1 reg_wr_src_3_to_1(
+        .sel(reg_wr_src_ctrl_wb),
+        .a(alu_result_wb),
+        .b(mem_data_out_wb),
+        .c(pc_plus4_wb),
+        .z(reg_wr_data)
+    );
 
 endmodule

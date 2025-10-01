@@ -44,7 +44,9 @@ module register_file (
 
     // --- Combinational Read Logic ---
     // Allows forwarding from the WB stage
-    assign reg1_data = (r1_idx == wr_idx && wr_en) ? wr_data : registers[r1_idx];
-    assign reg2_data = (r2_idx == wr_idx && wr_en) ? wr_data : registers[r2_idx];
+    assign reg1_data = (r1_idx == 0) ? 32'b0 : 
+    (r1_idx == wr_idx && wr_en) ? wr_data : registers[r1_idx];
+    assign reg2_data = (r2_idx == 0) ? 32'b0 : 
+    (r2_idx == wr_idx && wr_en) ? wr_data : registers[r2_idx];
 
 endmodule

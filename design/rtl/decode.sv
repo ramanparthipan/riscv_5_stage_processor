@@ -75,7 +75,7 @@ module decode (
                 case (funct3)
                     3'b000: opcode_out = SB;
                     3'b001: opcode_out = SH;
-                    3'b011: opcode_out = SW;    
+                    3'b010: opcode_out = SW;    
                 endcase
             end
             OP_BRANCH:

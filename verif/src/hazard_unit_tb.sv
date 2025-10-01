@@ -8,9 +8,9 @@ module hazard_unit_tb;
     logic [4:0]    ex_reg_wr_idx;
     logic          ex_do_mem_read_en;
 
-    logic          hazardFEEnable;
-    logic          hazardIFIDClear;
-    logic          hazardIDEXClear;
+    logic          hazard_fe_enable;
+    logic          hazard_if_id_clear;
+    logic          hazard_id_ex_clear;
 
     // Instantiate DUT
     hazard_unit dut (.*);
@@ -24,7 +24,7 @@ module hazard_unit_tb;
         opcode_in = ADD; id_reg1_idx = 1; id_reg2_idx = 2;
         ex_reg_wr_idx = 3; ex_do_mem_read_en = 0;
         #1;
-        assert (hazardIDEXClear == 0 && hazardFEEnable == 1 && hazardIFIDClear == 0)
+        assert (hazard_id_ex_clear == 0 && hazard_fe_enable == 1 && hazard_if_id_clear == 0)
             $display("PASS: No hazard detected correctly.");
         else
             $error("FAIL: Incorrect signals for no-hazard case.");
@@ -35,7 +35,7 @@ module hazard_unit_tb;
         opcode_in = ADD; id_reg1_idx = 5; id_reg2_idx = 2; // ID stage needs x5
         ex_reg_wr_idx = 5; ex_do_mem_read_en = 1;         // EX stage is a load to x5
         #1;
-        assert (hazardIDEXClear == 1 && hazardFEEnable == 0 && hazardIFIDClear == 0)
+        assert (hazard_id_ex_clear == 1 && hazard_fe_enable == 0 && hazard_if_id_clear == 0)
             $display("PASS: Load-use hazard detected correctly.");
         else
             $error("FAIL: Incorrect signals for load-use case.");
@@ -45,7 +45,7 @@ module hazard_unit_tb;
         opcode_in = BEQ; // A branch instruction is now in the ID stage
         ex_do_mem_read_en = 0; // No load-use hazard
         #1;
-        assert (hazardIDEXClear == 0 && hazardIFIDClear == 1 && hazardFEEnable == 0)
+        assert (hazard_id_ex_clear == 0 && hazard_if_id_clear == 1 && hazard_fe_enable == 0)
             $display("PASS: Control hazard (branch) detected correctly.");
         else
             $error("FAIL: Incorrect signals for control hazard case.");

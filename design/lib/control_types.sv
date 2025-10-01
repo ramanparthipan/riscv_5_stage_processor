@@ -1,3 +1,6 @@
+`ifndef CONTROL_TYPES_
+`define CONTROL_TYPES_
+
 // For the write-back MUX
 typedef enum logic [1:0] {
     WRSRC_ALURES,
@@ -43,3 +46,5 @@ typedef enum logic [1:0] {
     FWD_SRC_MEM,
     FWD_SRC_WB
 } forwarding_src_t;
+
+`endif
