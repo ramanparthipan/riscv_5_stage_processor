@@ -1,15 +1,15 @@
 `include "control_types.sv"
 
 module forwarding_unit (
-    // Inputs from ID/EX stage
+    // Inputs from EX stage
     input  logic [4:0] ex_reg1_idx,
     input  logic [4:0] ex_reg2_idx,
 
-    // Inputs from EX/MEM stage
+    // Inputs from MEM stage
     input  logic [4:0] mem_reg_wr_idx,
     input  logic       mem_reg_wr_en,
 
-    // Inputs from MEM/WB stage
+    // Inputs from WB stage
     input  logic [4:0] wb_reg_wr_idx,
     input  logic       wb_reg_wr_en,
 

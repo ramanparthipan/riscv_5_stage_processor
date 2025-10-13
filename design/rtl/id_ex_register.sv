@@ -13,8 +13,8 @@ module id_ex_register(
     input logic         do_jump_id,
     input comp_op_t     comp_ctrl_id,
     input reg_wr_src_t  reg_wr_src_ctrl_id,
-    input alu_src1_t    alu_op1_ctrl_id,
-    input alu_src2_t    alu_op2_ctrl_id,
+    input alu_src1_t    alu_src1_ctrl_id,
+    input alu_src2_t    alu_src2_ctrl_id,
     input alu_op_t      alu_ctrl_id,
     input mem_op_t      mem_ctrl_id,
     input logic [31:0]  pc_plus4_id, // PC
@@ -34,8 +34,8 @@ module id_ex_register(
     output logic        do_jump_ex,
     output comp_op_t    comp_ctrl_ex,
     output reg_wr_src_t reg_wr_src_ctrl_ex,
-    output alu_src1_t   alu_op1_ctrl_ex,
-    output alu_src2_t   alu_op2_ctrl_ex,
+    output alu_src1_t   alu_src1_ctrl_ex,
+    output alu_src2_t   alu_src2_ctrl_ex,
     output alu_op_t     alu_ctrl_ex,
     output mem_op_t     mem_ctrl_ex,
     output logic [31:0] pc_plus4_ex, // PC
@@ -58,8 +58,8 @@ always @(posedge clk) begin
         do_jump_ex              <= 0;
         comp_ctrl_ex            <= BR_NOP;
         reg_wr_src_ctrl_ex      <= 0;
-        alu_op1_ctrl_ex         <= 0;
-        alu_op2_ctrl_ex         <= 0;         
+        alu_src1_ctrl_ex         <= 0;
+        alu_src2_ctrl_ex         <= 0;         
         alu_ctrl_ex             <= ALU_NOP;
         mem_ctrl_ex             <= MEM_NOP;
         pc_plus4_ex             <= 0;
@@ -79,8 +79,8 @@ always @(posedge clk) begin
         do_jump_ex              <= do_jump_id;
         comp_ctrl_ex            <= comp_ctrl_id;
         reg_wr_src_ctrl_ex      <= reg_wr_src_ctrl_id;
-        alu_op1_ctrl_ex         <= alu_op1_ctrl_id;
-        alu_op2_ctrl_ex         <= alu_op2_ctrl_id;         
+        alu_src1_ctrl_ex         <= alu_src1_ctrl_id;
+        alu_src2_ctrl_ex         <= alu_src2_ctrl_id;         
         alu_ctrl_ex             <= alu_ctrl_id;
         mem_ctrl_ex             <= mem_ctrl_id;
         pc_plus4_ex             <= pc_plus4_id;

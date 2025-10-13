@@ -14,8 +14,8 @@ module id_ex_register_tb();
     logic         do_jump_id;
     comp_op_t     comp_ctrl_id;
     reg_wr_src_t  reg_wr_src_ctrl_id;
-    alu_src1_t    alu_op1_ctrl_id;
-    alu_src2_t    alu_op2_ctrl_id;
+    alu_src1_t    alu_src1_ctrl_id;
+    alu_src2_t    alu_src2_ctrl_id;
     alu_op_t      alu_ctrl_id;
     mem_op_t      mem_ctrl_id;
     logic [31:0]  pc_plus4_id; // PC
@@ -35,8 +35,8 @@ module id_ex_register_tb();
     logic        do_jump_ex;
     comp_op_t    comp_ctrl_ex;
     reg_wr_src_t reg_wr_src_ctrl_ex;
-    alu_src1_t   alu_op1_ctrl_ex;
-    alu_src2_t   alu_op2_ctrl_ex;
+    alu_src1_t   alu_src1_ctrl_ex;
+    alu_src2_t   alu_src2_ctrl_ex;
     alu_op_t     alu_ctrl_ex;
     mem_op_t     mem_ctrl_ex;
     logic [31:0] pc_plus4_ex; // PC

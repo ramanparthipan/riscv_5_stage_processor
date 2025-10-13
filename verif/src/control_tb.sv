@@ -15,8 +15,8 @@ module control_tb;
     logic           do_jump;
     comp_op_t       comp_ctrl;
     reg_wr_src_t    reg_wr_src_ctrl;
-    alu_src1_t      alu_op1_ctrl;
-    alu_src2_t      alu_op2_ctrl;
+    alu_src1_t      alu_src1_ctrl;
+    alu_src2_t      alu_src2_ctrl;
     alu_op_t        alu_ctrl;
     mem_op_t        mem_ctrl;
 
@@ -55,8 +55,8 @@ module control_tb;
         assert (do_jump           == exp_jump)      else $error("Jump FAIL for %s", opcode_to_string(test_op));
         assert (comp_ctrl         == exp_comp)      else $error("CompCtrl FAIL for %s", opcode_to_string(test_op));
         assert (reg_wr_src_ctrl   == exp_wr_src)    else $error("RegWrSrc FAIL for %s", opcode_to_string(test_op));
-        assert (alu_op1_ctrl      == exp_alu1)      else $error("AluSrc1 FAIL for %s", opcode_to_string(test_op));
-        assert (alu_op2_ctrl      == exp_alu2)      else $error("AluSrc2 FAIL for %s", opcode_to_string(test_op));
+        assert (alu_src1_ctrl      == exp_alu1)      else $error("AluSrc1 FAIL for %s", opcode_to_string(test_op));
+        assert (alu_src2_ctrl      == exp_alu2)      else $error("AluSrc2 FAIL for %s", opcode_to_string(test_op));
         assert (alu_ctrl          == exp_alu_op)    else $error("AluOp FAIL for %s", opcode_to_string(test_op));
         assert (mem_ctrl          == exp_mem_ctrl)  else $error("MemCtrl FAIL for %s", opcode_to_string(test_op));
 

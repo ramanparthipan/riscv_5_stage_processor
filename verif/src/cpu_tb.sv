@@ -5,7 +5,7 @@ module cpu_tb;
     `include "control_types.sv"
 
     localparam CLK_PERIOD = 10;
-    localparam TEST = 5;
+    localparam TEST = 1;
 
     logic         clk;
     logic         resetn;
@@ -25,7 +25,7 @@ module cpu_tb;
 
     // Instantiate DUTs
     cpu cpu_h (.*);
-    data_memory data_mem_h (
+    data_memory data_memory_h (
         .clk(clk), .wr_en(mem_wr_en), .mem_ctrl(mem_op),
         .addr(mem_addr), .data_in(mem_data_in), .data_out(mem_data_out)
     );
@@ -53,7 +53,7 @@ module cpu_tb;
             
 
             // Let the simulation run for enough cycles to complete the program
-            #(CLK_PERIOD * 20);
+            #(CLK_PERIOD * 100);
 
 
             $display("Simulation run finished.");
@@ -62,7 +62,7 @@ module cpu_tb;
             $display("\n--- Verification Phase ---");
 
             // Check 1: The value 25 (0x19) should have been stored at address 40
-            stored_val = {data_mem_h.mem[43], data_mem_h.mem[42], data_mem_h.mem[41], data_mem_h.mem[40]};
+            stored_val = {data_memory_h.mem[43], data_memory_h.mem[42], data_memory_h.mem[41], data_memory_h.mem[40]};
             assert (stored_val == 32'd25)
                 $display("PASS: Value 25 correctly stored in data memory.");
             else
@@ -119,7 +119,7 @@ module cpu_tb;
                 $error("FAIL: Register x7 incorrect. Got %d", cpu_h.register_file_h.registers[7]);
 
             // The value 10 (0x19) should have been stored at address 40
-            stored_val = {data_mem_h.mem[43], data_mem_h.mem[42], data_mem_h.mem[41], data_mem_h.mem[40]};
+            stored_val = {data_memory_h.mem[43], data_memory_h.mem[42], data_memory_h.mem[41], data_memory_h.mem[40]};
             assert (stored_val == 32'd10)
                 $display("PASS: Value 10 correctly stored in data memory.");
             else
@@ -221,22 +221,44 @@ module cpu_tb;
             #10;
             resetn = 1'b1;
 
+            data_memory_h.mem[100] = 8'h0a;
+            data_memory_h.mem[101] = 8'h00;
+            data_memory_h.mem[102] = 8'h00;
+            data_memory_h.mem[103] = 8'h00;
+
             // Let the simulation run for enough cycles to complete the program
             #(CLK_PERIOD * 20);
 
 
             $display("Simulation run finished.");
+
+            $display("\n--- Verification Phase ---");
+
+            assert (cpu_h.register_file_h.registers[2] == 32'd15)
+                $display("PASS: Register x2 holds correct value 32'd15.");
+            else
+                $error("FAIL: Register x2 incorrect. Got %h", cpu_h.register_file_h.registers[2]);
            
             $display("\n--- Test Finished ---");
             $finish;
         end
     end
 
-    always @(pc_out) begin
-        $display("At time %0t: pc_out changed to %h", $time, pc_out);
-        #5;
+    always @(posedge clk) begin
+        #2
+        $display("At time %0t: pc_out has the value %h", $time, pc_out);
         $display("At time %0t: instr_if has the value of %h", $time, instr_if);
         $display("At time %0t: instr_id has the value of %h", $time, cpu_h.if_id_register_h.instr_id);
+        $display("At time %0t: hazard_unit_h.hazard_fe_enable has the value of %h", $time, cpu_h.hazard_unit_h.hazard_fe_enable);
+        $display("At time %0t: hazard_unit_h.hazard_if_id_clear has the value of %h", $time, cpu_h.hazard_unit_h.hazard_if_id_clear);
+        $display("At time %0t: hazard_unit_h.hazard_id_ex_clear has the value of %h", $time, cpu_h.hazard_unit_h.hazard_id_ex_clear);
+        $display("At time %0t: register_file_h.registers[1] has the value of %h", $time, cpu_h.register_file_h.registers[1]);
+        $display("At time %0t: alu_h.operand_a has the value of %h", $time, cpu_h.alu_h.operand_a);
+        $display("At time %0t: alu_h.operand_b has the value of %h", $time, cpu_h.alu_h.operand_b);
+        $display("At time %0t: alu_h.result has the value of %h", $time, cpu_h.alu_h.result);
+        $display("At time %0t: data_memory_h.mem_ctrl has the value of %h", $time, data_memory_h.mem_ctrl);
+        $display("At time %0t: data_memory_h.data_out has the value of %h", $time, data_memory_h.data_out);
+
     end
 
 

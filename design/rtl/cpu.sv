@@ -25,67 +25,67 @@ module cpu #(
     wire                fe_enable;          // Enable for IF stage (PC and IF/ID pipeline register)
 
     // ID stage
-    wire [31:0]         instr_id;           // Instruction signal in ID stage
-    wire [31:0]         pc_id;              // Propagated PC value through ID stage
-    wire [31:0]         pc_plus4_id;        // Propagated PC+4 value through ID stage
-    wire opcode_out_t   opcode_id;          // Opcode outputted from Decode unit
-    wire comp_op_t      comp_ctrl_id;
-    wire reg_wr_src_t   reg_wr_src_ctrl_id;
-    wire alu_op_t       alu_ctrl_id;
-    wire mem_op_t       mem_ctrl_id;
-    wire [4:0]          wr_reg_idx_id;      // Write address to the Register File, originating from WB stage
-    wire [4:0]          r1_reg_idx_id;      // Read address 1 from Register File
-    wire [4:0]          r2_reg_idx_id;      // Read address 2 from Register File
-    wire [31:0]         reg1_data_id;       // Read data 1 from Register File
-    wire [31:0]         reg2_data_id;       // Read data 2 from Register File
-    wire                reg_wr_en;          // Write enable for Register File
-    wire [4:0]          reg_wr_idx;         // Write address for Register File
-    wire [31:0]         reg_wr_data;        // Write data for Register File
-    wire [31:0]         imm_id;             // Immediate value outputted from Immediate Generator
-    wire                id_ex_clear;        // Clear for ID/EX pipeline register, from Hazard Unit
+    wire [31:0]         instr_id;               // Instruction signal in ID stage
+    wire [31:0]         pc_id;                  // Propagated PC value in ID stage
+    wire [31:0]         pc_plus4_id;            // Propagated PC+4 value in ID stage
+    wire opcode_out_t   opcode_id;              // Opcode outputted from Decode unit
+    wire comp_op_t      comp_ctrl_id;           // Control signal for Branch unit in ID stage
+    wire reg_wr_src_t   reg_wr_src_ctrl_id;     // Source control signal for write data for Register File in ID stage
+    wire alu_op_t       alu_ctrl_id;            // Control signal for ALU in ID stage
+    wire mem_op_t       mem_ctrl_id;            // Control signal for Data Memory in ID stage
+    wire [4:0]          wr_reg_idx_id;          // Write address to the Register File, originating from WB stage
+    wire [4:0]          r1_reg_idx_id;          // Read address 1 from Register File
+    wire [4:0]          r2_reg_idx_id;          // Read address 2 from Register File
+    wire [31:0]         reg1_data_id;           // Read data 1 from Register File
+    wire [31:0]         reg2_data_id;           // Read data 2 from Register File
+    wire                reg_wr_en;              // Write enable for Register File
+    wire [4:0]          reg_wr_idx;             // Write address for Register File
+    wire [31:0]         reg_wr_data;            // Write data for Register File
+    wire [31:0]         imm_id;                 // Immediate value outputted from Immediate Generator
+    wire                id_ex_clear;            // Clear for ID/EX pipeline register, from Hazard Unit
 
     // EX stage
-    wire                    reg_do_write_ctrl_ex;
-    wire                    mem_do_write_ctrl_ex;
-    wire                    mem_do_read_ctrl_ex;
-    wire                    do_branch_ex;
-    wire                    do_jump_ex;
-    wire comp_op_t          comp_ctrl_ex;
-    wire reg_wr_src_t       reg_wr_src_ctrl_ex;
-    wire alu_src1_t         alu_op1_ctrl_ex;
-    wire alu_src2_t         alu_op2_ctrl_ex;
-    wire alu_op_t           alu_ctrl_ex;
-    wire mem_op_t           mem_ctrl_ex;
-    wire [31:0]             pc_plus4_ex;
-    wire [31:0]             pc_ex;
-    wire [31:0]             reg1_data_ex;
-    wire [31:0]             reg2_data_ex;
-    wire [31:0]             imm_ex;
-    wire opcode_out_t       opcode_ex;
-    wire [4:0]              r1_reg_idx_ex;
-    wire [4:0]              r2_reg_idx_ex;
-    wire [4:0]              wr_reg_idx_ex;
-    wire forwarding_src_t   alu_reg1_forwarding_ctrl;
-    wire forwarding_src_t   alu_reg2_forwarding_ctrl;
-    wire [31:0]             reg1_src;
-    wire [31:0]             reg2_src;
-    wire [31:0]             alu_op1;
-    wire [31:0]             alu_op2;
-    wire [31:0]             alu_result_ex;
-    wire                    branch_taken;
+    wire                    reg_do_write_ctrl_ex;       // Write enable for Register File in EX stage
+    wire                    mem_do_write_ctrl_ex;       // Write enable for Data Memory in EX stage
+    wire                    mem_do_read_ctrl_ex;        // Read enable for Data Memory in EX stage
+    wire                    do_branch_ex;               // Branch enable signal for updating PC
+    wire                    do_jump_ex;                 // Jump enable signal for updating PC
+    wire comp_op_t          comp_ctrl_ex;               // Control signal for Branch unit in EX stage
+    wire reg_wr_src_t       reg_wr_src_ctrl_ex;         // Source control signal for write data for Register File in EX stage
+    wire alu_src1_t         alu_src1_ctrl_ex;           // Source control signal for ALU operand 1 in EX stage
+    wire alu_src2_t         alu_src2_ctrl_ex;           // Source control signal for ALU operand 2 in EX stage
+    wire alu_op_t           alu_ctrl_ex;                // Control signal for ALU in EX stage
+    wire mem_op_t           mem_ctrl_ex;                // Control signal for Data Memory in EX stage
+    wire [31:0]             pc_plus4_ex;                // Propagated PC+4 value in EX stage
+    wire [31:0]             pc_ex;                      // Propagated PC value in EX stage
+    wire [31:0]             reg1_data_ex;               // Read data 1 from Register File in EX stage
+    wire [31:0]             reg2_data_ex;               // Read data 2 from Register File in EX stage
+    wire [31:0]             imm_ex;                     // Immediate value from Immediate Generator in EX stage
+    wire opcode_out_t       opcode_ex;                  // Opcode in EX stage
+    wire [4:0]              r1_reg_idx_ex;              // Read address 1 for Register File in EX stage
+    wire [4:0]              r2_reg_idx_ex;              // Read address 2 for Register File in EX stage
+    wire [4:0]              wr_reg_idx_ex;              // Write address for Register File in EX stage
+    wire forwarding_src_t   alu_reg1_forwarding_ctrl;   // Forwarding select signal for read address 1
+    wire forwarding_src_t   alu_reg2_forwarding_ctrl;   // Forwarding select signal for read address 2
+    wire [31:0]             reg1_src;                   // Forwarded value of Read address 1
+    wire [31:0]             reg2_src;                   // Forwarded value of Read address 2
+    wire [31:0]             alu_op1;                    // ALU operand 1
+    wire [31:0]             alu_op2;                    // ALU operand 2
+    wire [31:0]             alu_result_ex;              // ALU result in EX stage
+    wire                    branch_taken;               // Branch taken signal to update PC
 
     // MEM stage
-    wire                    reg_do_write_ctrl_mem;
-    wire reg_wr_src_t       reg_wr_src_ctrl_mem;
-    wire [31:0]             pc_plus4_mem;
-    wire [31:0]             alu_result_mem;
-    wire [4:0]              wr_reg_idx_mem;
+    wire                    reg_do_write_ctrl_mem;  // Write enable for Register File in MEM stage
+    wire reg_wr_src_t       reg_wr_src_ctrl_mem;    // Source control signal for write data for Register File in MEM stage
+    wire [31:0]             pc_plus4_mem;           // Propagated PC+4 value in MEM stage
+    wire [31:0]             alu_result_mem;         // ALU result in MEM stage
+    wire [4:0]              wr_reg_idx_mem;         // Write address for Register File in MEM stage
 
     // WB stage
-    wire reg_wr_src_t       reg_wr_src_ctrl_wb;
-    wire [31:0]             pc_plus4_wb;
-    wire [31:0]             alu_result_wb;
-    wire [31:0]             mem_data_out_wb;
+    wire reg_wr_src_t       reg_wr_src_ctrl_wb; // Source control signal for write data for Register File in WB stage
+    wire [31:0]             pc_plus4_wb;        // Propagated PC+4 value in WB stage
+    wire [31:0]             alu_result_wb;      // ALU result in WB stage
+    wire [31:0]             mem_data_out_wb;    // Data out from Data Memory in WB stage
 
 
     program_counter program_counter_h(
@@ -131,8 +131,8 @@ module cpu #(
         .do_jump(do_jump_id),
         .comp_ctrl(comp_ctrl_id),
         .reg_wr_src_ctrl(reg_wr_src_ctrl_id),
-        .alu_op1_ctrl(alu_op1_ctrl_id),
-        .alu_op2_ctrl(alu_op2_ctrl_id),
+        .alu_src1_ctrl(alu_src1_ctrl_id),
+        .alu_src2_ctrl(alu_src2_ctrl_id),
         .alu_ctrl(alu_ctrl_id),
         .mem_ctrl(mem_ctrl_id)
     );
@@ -167,8 +167,8 @@ module cpu #(
         .do_jump_id(do_jump_id),
         .comp_ctrl_id(comp_ctrl_id),
         .reg_wr_src_ctrl_id(reg_wr_src_ctrl_id),
-        .alu_op1_ctrl_id(alu_op1_ctrl_id),
-        .alu_op2_ctrl_id(alu_op2_ctrl_id),
+        .alu_src1_ctrl_id(alu_src1_ctrl_id),
+        .alu_src2_ctrl_id(alu_src2_ctrl_id),
         .alu_ctrl_id(alu_ctrl_id),
         .mem_ctrl_id(mem_ctrl_id),
         .pc_plus4_id(pc_plus4_id),
@@ -188,8 +188,8 @@ module cpu #(
         .do_jump_ex(do_jump_ex),
         .comp_ctrl_ex(comp_ctrl_ex),
         .reg_wr_src_ctrl_ex(reg_wr_src_ctrl_ex),
-        .alu_op1_ctrl_ex(alu_op1_ctrl_ex),
-        .alu_op2_ctrl_ex(alu_op2_ctrl_ex),
+        .alu_src1_ctrl_ex(alu_src1_ctrl_ex),
+        .alu_src2_ctrl_ex(alu_src2_ctrl_ex),
         .alu_ctrl_ex(alu_ctrl_ex),
         .mem_ctrl_ex(mem_ctrl_ex),
         .pc_plus4_ex(pc_plus4_ex),
@@ -214,7 +214,7 @@ module cpu #(
 
     // Port order according to alu_src1_t enum
     mux_2_to_1 alu_op1_sel_2_to_1(
-        .sel(alu_op1_ctrl_ex),
+        .sel(alu_src1_ctrl_ex),
         .a(reg1_src),
         .b(pc_ex),
         .z(alu_op1)
@@ -231,7 +231,7 @@ module cpu #(
 
     // Port order according to alu_src2_t enum
     mux_2_to_1 alu_op2_sel_2_to_1(
-        .sel(alu_op2_ctrl_ex),
+        .sel(alu_src2_ctrl_ex),
         .a(reg2_src),
         .b(imm_ex),
         .z(alu_op2)
@@ -265,9 +265,9 @@ module cpu #(
     );
 
     hazard_unit hazard_unit_h(
-        .opcode_in(opcode_id),
         .id_reg1_idx(r1_reg_idx_id),
         .id_reg2_idx(r2_reg_idx_id),
+        .pc_jump_enable(pc_jump_enable),
         .ex_reg_wr_idx(wr_reg_idx_ex),
         .ex_do_mem_read_en(mem_do_read_ctrl_ex),
         .hazard_fe_enable(fe_enable),
