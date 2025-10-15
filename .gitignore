@@ -1,19 +1,8 @@
-# Program files for cpu_tb
-verif/src/programs/
+# Module tests
+verif/sim/module_tests/
 
-# Module-level tests
-verif/sim/alu_test
-verif/sim/branch_test
-verif/sim/control_test
-verif/sim/cpu_test
-verif/sim/data_memory_test
-verif/sim/decode_test
-verif/sim/ex_mem_test
-verif/sim/forwarding_unit_test
-verif/sim/hazard_unit_test
-verif/sim/id_ex_test
-verif/sim/immediate_generator_test
-verif/sim/instr_mem_test
-verif/sim/mem_wb_test
-verif/sim/pc_test
-verif/sim/register_file_test
+# Instruction tests
+verif/sim/instruction_tests/
+
+# C program tests
+verif/sim/c_tests/

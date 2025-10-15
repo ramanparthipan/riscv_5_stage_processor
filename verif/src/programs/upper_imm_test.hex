@@ -1,0 +1,22 @@
+// 32-bit instructions (Big Endian):
+// 0x00000013
+// 0xabcde537
+// 0x11111597
+// 0x00000063
+// Little-endian bytes
+13
+00
+00
+00
+37
+e5
+cd
+ab
+97
+15
+11
+11
+63
+00
+00
+00
