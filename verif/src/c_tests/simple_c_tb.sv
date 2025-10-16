@@ -5,7 +5,8 @@ module cpu_tb;
     `include "control_types.sv"
 
     localparam CLK_PERIOD = 10;
-    localparam TEST = 1;
+    localparam INSTR_MEM_SIZE_BYTES = 1024;
+    localparam MEM_SIZE_BYTES = 1024;
 
     logic         clk;
     logic         resetn;
@@ -18,14 +19,14 @@ module cpu_tb;
     logic [31:0]  mem_data_out;
 
     // Instruction memory
-    instr_mem instr_mem_h(
+    instr_mem #(.INSTR_MEM_SIZE_BYTES(INSTR_MEM_SIZE_BYTES)) instr_mem_h(
         .addr(pc_out),
         .instr(instr_if)
     );
 
     // Instantiate DUTs
     cpu cpu_h (.*);
-    data_memory data_memory_h (
+    data_memory #(.MEM_SIZE_BYTES(MEM_SIZE_BYTES)) data_memory_h(
         .clk(clk), .wr_en(mem_wr_en), .mem_ctrl(mem_op),
         .addr(mem_addr), .data_in(mem_data_in), .data_out(mem_data_out)
     );
@@ -39,6 +40,14 @@ module cpu_tb;
     // Test sequence
     initial begin
         $display("--- Starting CPU Testbench ---");
+
+        // initialise values in instr_mem and data_memory
+        for (int i=0; i<INSTR_MEM_SIZE_BYTES; i++) begin
+            instr_mem_h.mem[i] = 8'b0;
+        end
+        for (int i=0; i<MEM_SIZE_BYTES; i++) begin
+            data_memory_h.mem[i] = 8'b0;
+        end
 
         // Load program into instruction memory
         $readmemh("verif/src/programs/simple_c_test.hex", instr_mem_h.mem);
@@ -62,12 +71,14 @@ module cpu_tb;
         assert (data_memory_h.mem[512] == 8'h0a)
             $display("PASS: Final value of 10 was correctly stored in memory.");
         else
-            $error("FAIL: Incorrect value in memory. Got %h", data_memory_h.mem[512]);
+            $error("FAIL: Incorrect value in data_memory_h.mem[512]. Got %h", data_memory_h.mem[512]);
 
         $finish;
     end
 
     always @(posedge clk) begin
+
+        $display($sformatf("At time %t, cpu_h.ex_mem_register_h.pc_plus4_mem has the value %h", $time, data_memory_h.wr_en));
         $display($sformatf("At time %t, data_memory_h.data_in has the value %h", $time, data_memory_h.data_in));
         $display($sformatf("At time %t, data_memory_h.addr has the value %h", $time, data_memory_h.addr));
         $display($sformatf("At time %t, data_memory_h.wr_en has the value %h", $time, data_memory_h.wr_en));

@@ -8,7 +8,7 @@
 //
 module register_file (
     input wire clk,          // Clock
-    input wire rst_n,        // Asynchronous active-low reset
+    input wire resetn,        // Asynchronous active-low reset
 
     // Read Port 1
     input wire [4:0]  r1_idx,       // Address of register to read
@@ -28,8 +28,8 @@ module register_file (
     reg [31:0] registers [0:31];
 
     // --- Synchronous Write Logic ---
-    always @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
+    always @(posedge clk or negedge resetn) begin
+        if (!resetn) begin
             integer i;
             for (i = 0; i < 32; i = i + 1) begin
                 registers[i] <= 32'b0;

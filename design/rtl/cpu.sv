@@ -1,10 +1,7 @@
 `include "opcodes.sv"
 `include "control_types.sv"
 
-module cpu #(
-    parameter INSTR_MEM_SIZE_BYTES = 1024,
-    parameter MEM_SIZE_BYTES = 1024
-)(
+module cpu (
     input   logic           clk,
     input   logic           resetn,
 
@@ -12,10 +9,10 @@ module cpu #(
     input   logic [31:0]    instr_if,
 
     output                  mem_wr_en, // to data_memory
-    output mem_op_t         mem_op,
-    output logic [31:0]     mem_addr,
-    output logic [31:0]     mem_data_in,
-    input logic [31:0]      mem_data_out
+    output  mem_op_t        mem_op,
+    output  logic [31:0]    mem_addr,
+    output  logic [31:0]    mem_data_in,
+    input   logic [31:0]    mem_data_out
 );
 
     // IF stage
@@ -139,7 +136,7 @@ module cpu #(
 
     register_file register_file_h(
         .clk(clk),
-        .rst_n(resetn),
+        .resetn(resetn),
         .r1_idx(r1_reg_idx_id),
         .r2_idx(r2_reg_idx_id),
         .reg1_data(reg1_data_id),
