@@ -1,5 +1,3 @@
-`include "opcodes.sv"
-
 module hazard_unit (
     // Inputs from ID stage
     input logic [4:0]   id_reg1_idx,

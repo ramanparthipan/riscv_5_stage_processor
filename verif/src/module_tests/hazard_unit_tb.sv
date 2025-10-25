@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 
 module hazard_unit_tb;
-    `include "opcodes.sv"
 
     logic [4:0]     id_reg1_idx, id_reg2_idx;
     logic           pc_jump_enable;            
