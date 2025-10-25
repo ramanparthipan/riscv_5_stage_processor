@@ -11,7 +11,7 @@ module instr_mem_tb();
 
     
     initial begin
-        $readmemh("verif/src/cpu_program.hex", dut.mem);
+        $readmemh("verif/src/programs/add_full_test.hex", dut.mem);
 
         addr = 'h0;
         #20
