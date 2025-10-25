@@ -57,9 +57,9 @@ always @(posedge clk) begin
         do_branch_ex            <= 0;
         do_jump_ex              <= 0;
         comp_ctrl_ex            <= BR_NOP;
-        reg_wr_src_ctrl_ex      <= 0;
-        alu_src1_ctrl_ex         <= 0;
-        alu_src2_ctrl_ex         <= 0;         
+        reg_wr_src_ctrl_ex      <= WRSRC_ALURES;
+        alu_src1_ctrl_ex        <= SRC1_REG1;
+        alu_src2_ctrl_ex        <= SRC2_REG2;         
         alu_ctrl_ex             <= ALU_NOP;
         mem_ctrl_ex             <= MEM_NOP;
         pc_plus4_ex             <= 0;
@@ -67,7 +67,7 @@ always @(posedge clk) begin
         reg1_data_ex            <= 0;
         reg2_data_ex            <= 0;
         imm_out_ex              <= 0;
-        opcode_out_ex           <= 0;
+        opcode_out_ex           <= NOP;
         r1_reg_idx_ex           <= 0;
         r2_reg_idx_ex           <= 0;
         wr_reg_idx_ex           <= 0;
