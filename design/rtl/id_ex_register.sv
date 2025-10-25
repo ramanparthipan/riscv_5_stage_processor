@@ -1,4 +1,3 @@
-`include "opcodes.sv"
 `include "control_types.sv"
 
 module id_ex_register(
@@ -22,7 +21,6 @@ module id_ex_register(
     input logic [31:0]  reg1_data_id, // Register file
     input logic [31:0]  reg2_data_id,
     input logic [31:0]  imm_out_id, // Immediate generator
-    input opcode_out_t  opcode_out_id, // Decode unit
     input logic [4:0]   r1_reg_idx_id,
     input logic [4:0]   r2_reg_idx_id,
     input logic [4:0]   wr_reg_idx_id,
@@ -43,7 +41,6 @@ module id_ex_register(
     output logic [31:0] reg1_data_ex, // Register file
     output logic [31:0] reg2_data_ex,
     output logic [31:0] imm_out_ex, // Immediate generator
-    output opcode_out_t opcode_out_ex, // Decode unit
     output logic [4:0]  r1_reg_idx_ex,
     output logic [4:0]  r2_reg_idx_ex,
     output logic [4:0]  wr_reg_idx_ex
@@ -67,7 +64,6 @@ always @(posedge clk) begin
         reg1_data_ex            <= 0;
         reg2_data_ex            <= 0;
         imm_out_ex              <= 0;
-        opcode_out_ex           <= NOP;
         r1_reg_idx_ex           <= 0;
         r2_reg_idx_ex           <= 0;
         wr_reg_idx_ex           <= 0;
@@ -88,7 +84,6 @@ always @(posedge clk) begin
         reg1_data_ex            <= reg1_data_id;
         reg2_data_ex            <= reg2_data_id;
         imm_out_ex              <= imm_out_id;
-        opcode_out_ex           <= opcode_out_id;
         r1_reg_idx_ex           <= r1_reg_idx_id;
         r2_reg_idx_ex           <= r2_reg_idx_id;
         wr_reg_idx_ex           <= wr_reg_idx_id;

@@ -58,7 +58,6 @@ module cpu (
     wire [31:0]             reg1_data_ex;               // Read data 1 from Register File in EX stage
     wire [31:0]             reg2_data_ex;               // Read data 2 from Register File in EX stage
     wire [31:0]             imm_ex;                     // Immediate value from Immediate Generator in EX stage
-    wire opcode_out_t       opcode_ex;                  // Opcode in EX stage
     wire [4:0]              r1_reg_idx_ex;              // Read address 1 for Register File in EX stage
     wire [4:0]              r2_reg_idx_ex;              // Read address 2 for Register File in EX stage
     wire [4:0]              wr_reg_idx_ex;              // Write address for Register File in EX stage
@@ -173,7 +172,6 @@ module cpu (
         .reg1_data_id(reg1_data_id),
         .reg2_data_id(reg2_data_id),
         .imm_out_id(imm_id),
-        .opcode_out_id(opcode_id),
         .r1_reg_idx_id(r1_reg_idx_id),
         .r2_reg_idx_id(r2_reg_idx_id),
         .wr_reg_idx_id(wr_reg_idx_id),
@@ -194,7 +192,6 @@ module cpu (
         .reg1_data_ex(reg1_data_ex),
         .reg2_data_ex(reg2_data_ex),
         .imm_out_ex(imm_ex),
-        .opcode_out_ex(opcode_ex),
         .r1_reg_idx_ex(r1_reg_idx_ex),
         .r2_reg_idx_ex(r2_reg_idx_ex),
         .wr_reg_idx_ex(wr_reg_idx_ex)
