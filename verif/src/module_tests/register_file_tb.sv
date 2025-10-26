@@ -6,7 +6,7 @@ module register_file_tb;
 
     // --- Signals ---
     logic                clk;
-    logic                rst_n;
+    logic                resetn;
     logic [4:0]          r1_idx, r2_idx, wr_idx;
     logic                wr_en;
     logic [DATA_WIDTH-1:0] wr_data, reg1_data, reg2_data;
@@ -21,16 +21,16 @@ module register_file_tb;
     end
 
     initial begin
-        rst_n = 1'b0;
+        resetn = 1'b0;
         #20;
-        rst_n = 1'b1;
+        resetn = 1'b1;
     end
 
 
     // --- Test Sequence ---
     initial begin
         // Wait for reset to finish
-        @(posedge rst_n);
+        @(posedge resetn);
         @(posedge clk);
 
         // =======================================================
