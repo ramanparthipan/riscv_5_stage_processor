@@ -27,6 +27,8 @@ module cpu
     opcode_out_t        opcode_id;              // Opcode outputted from Decode unit
     comp_op_t           comp_ctrl_id;           // Control signal for Branch unit in ID stage
     reg_wr_src_t        reg_wr_src_ctrl_id;     // Source control signal for write data for Register File in ID stage
+    alu_src1_t          alu_src1_ctrl_id;       // Source control signal for ALU operand 1 in ID stage
+    alu_src2_t          alu_src2_ctrl_id;       // Source control signal for ALU operand 2 in ID stage
     alu_op_t            alu_ctrl_id;            // Control signal for ALU in ID stage
     mem_op_t            mem_ctrl_id;            // Control signal for Data Memory in ID stage
     logic [4:0]         wr_reg_idx_id;          // Write address to the Register File, originating from WB stage
