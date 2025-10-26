@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module cpu_tb;
+module mem_tb;
     `include "opcodes.sv"
     `include "control_types.sv"
 
