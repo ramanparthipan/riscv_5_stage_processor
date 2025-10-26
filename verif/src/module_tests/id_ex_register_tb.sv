@@ -1,6 +1,8 @@
 `timescale 1ns/1ps
 
 module id_ex_register_tb();
+    import control_types_pkg::*;
+
     localparam CLOCK_PERIOD = 10;
 
     logic         clk;
@@ -23,7 +25,6 @@ module id_ex_register_tb();
     logic [31:0]  reg1_data_id; // Register file
     logic [31:0]  reg2_data_id;
     logic [31:0]  imm_out_id; // Immediate generator
-    opcode_out_t  opcode_out_id; // Decode unit
     logic [4:0]   r1_reg_idx_id;
     logic [4:0]   r2_reg_idx_id;
     logic [4:0]   wr_reg_idx_id;
@@ -44,7 +45,6 @@ module id_ex_register_tb();
     logic [31:0] reg1_data_ex; // Register file
     logic [31:0] reg2_data_ex;
     logic [31:0] imm_out_ex; // Immediate generator
-    opcode_out_t opcode_out_ex; // Decode unit
     logic [4:0]  r1_reg_idx_ex;
     logic [4:0]  r2_reg_idx_ex;
     logic [4:0]  wr_reg_idx_ex;

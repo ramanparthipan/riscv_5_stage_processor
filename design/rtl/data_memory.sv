@@ -1,6 +1,6 @@
-`include "control_types.sv"
-
-module data_memory #(
+module data_memory 
+import control_types_pkg::*;
+#(
     parameter MEM_SIZE_BYTES = 1024 // 1KB memory size
 )(
     input  logic         clk,

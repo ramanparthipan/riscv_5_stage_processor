@@ -1,6 +1,6 @@
-`include "control_types.sv"
-
-module mem_wb_register (
+module mem_wb_register 
+    import control_types_pkg::*;
+(
     input  logic         clk,
     input  logic         clear,
     input  logic         enable,

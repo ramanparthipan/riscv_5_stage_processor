@@ -1,6 +1,6 @@
-`include "control_types.sv"
-
-module alu (
+module alu 
+    import control_types_pkg::*;
+(
     input  logic [31:0] operand_a,
     input  logic [31:0] operand_b,
     input  alu_op_t     alu_op,

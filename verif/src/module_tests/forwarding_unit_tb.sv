@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module forwarding_unit_tb;
-    `include "control_types.sv"
+    import control_types_pkg::*;
 
     logic [4:0] ex_reg1_idx, ex_reg2_idx;
     logic [4:0] mem_reg_wr_idx, wb_reg_wr_idx;

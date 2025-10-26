@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 module c_tb;
-    `include "opcodes.sv"
-    `include "control_types.sv"
+    import opcodes_pkg::*;
+    import control_types_pkg::*;
 
     localparam CLK_PERIOD = 10;
     localparam INSTR_MEM_SIZE_BYTES = 1024;

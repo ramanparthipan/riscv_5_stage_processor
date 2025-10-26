@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module ex_mem_register_tb;
-    `include "control_types.sv"
+    import control_types_pkg::*;
 
     localparam CLK_PERIOD = 10;
 

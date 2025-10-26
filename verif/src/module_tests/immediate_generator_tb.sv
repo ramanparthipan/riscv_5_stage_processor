@@ -1,7 +1,8 @@
 `timescale 1ns / 1ps
 
 module immediate_generator_tb;
-    `include "opcodes.sv"
+    import opcodes_pkg::*;
+
 
     opcode_out_t opcode_in;
     logic [31:0] instr_in;

@@ -1,8 +1,6 @@
-`timescale 1ns / 1ps
-
-`include "opcodes.sv"
-
-module immediate_generator (
+module immediate_generator 
+    import opcodes_pkg::*;
+(
     input  opcode_out_t   opcode_in,
     input  logic [31:0]   instr_in,
     output logic [31:0]   imm_out

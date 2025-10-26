@@ -1,8 +1,7 @@
 `timescale 1ns / 1ps
 
 module tb_decode;
-
-    `include "opcodes.sv"
+    import opcodes_pkg::*;
 
     // Signals to connect to the decoder module
     logic [31:0]        instr;

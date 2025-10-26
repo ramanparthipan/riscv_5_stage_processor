@@ -1,10 +1,8 @@
 `timescale 1ns / 1ps
 
 module control_tb;
-
-    // Include the necessary enum definitions
-    `include "opcodes.sv"       // Contains the 'opcode_out_t' typedef
-    `include "control_types.sv" // Contains the control signal enums
+    import opcodes_pkg::*;
+    import control_types_pkg::*;
 
     // --- Signals ---
     opcode_out_t    opcode_in;

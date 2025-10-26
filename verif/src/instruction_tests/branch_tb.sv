@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
 module branch_tb;
-    `include "opcodes.sv"
-    `include "control_types.sv"
+    import opcodes_pkg::*;
+    import control_types_pkg::*;
 
     localparam CLK_PERIOD = 10;
     localparam TEST = 1;

@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module alu_tb;
-    `include "control_types.sv"
+    import control_types_pkg::*;
 
     logic [31:0] operand_a;
     logic [31:0] operand_b;

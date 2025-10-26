@@ -1,6 +1,6 @@
-`include "control_types.sv"
-
-module branch (
+module branch 
+    import control_types_pkg::*;
+(
     input  logic [31:0] operand_a,
     input  logic [31:0] operand_b,
     input  comp_op_t    comp_op,

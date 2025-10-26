@@ -1,8 +1,7 @@
-// Include the enum definitions required by this module
-`include "opcodes.sv"
-`include "control_types.sv"
-
-module control (
+module control 
+    import opcodes_pkg::*;
+    import control_types_pkg::*;
+(
     input  opcode_out_t opcode_in,
 
     // Outputs

@@ -1,5 +1,4 @@
-`ifndef CONTROL_TYPES_
-`define CONTROL_TYPES_
+package control_types_pkg;
 
 // For the write-back MUX
 typedef enum logic [1:0] {
@@ -47,4 +46,4 @@ typedef enum logic [1:0] {
     FWD_SRC_WB
 } forwarding_src_t;
 
-`endif
+endpackage

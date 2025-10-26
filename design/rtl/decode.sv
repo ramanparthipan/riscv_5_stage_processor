@@ -1,6 +1,6 @@
-`include "opcodes.sv"
-
-module decode (
+module decode 
+    import opcodes_pkg::*;
+(
     input  logic [31:0]    instr,
     output opcode_out_t    opcode_out, // to control unit and imm. generator
     output logic [4:0]     wr_reg_idx, // rd

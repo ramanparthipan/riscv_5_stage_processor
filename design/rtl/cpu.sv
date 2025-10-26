@@ -1,7 +1,7 @@
-`include "opcodes.sv"
-`include "control_types.sv"
-
-module cpu (
+module cpu 
+    import opcodes_pkg::*;
+    import control_types_pkg::*;
+(
     input   logic           clk,
     input   logic           resetn,
 

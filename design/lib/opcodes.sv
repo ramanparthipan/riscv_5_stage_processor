@@ -1,5 +1,4 @@
-`ifndef OPCODES_
-`define OPCODES_
+package opcodes_pkg;
 
 // localparam definitions for standard RISC-V 32-bit opcodes
 // Register-register ALU operations (ADD, SUB, etc.)
@@ -44,4 +43,4 @@ typedef enum logic [5:0] {
     ECALL, EBREAK
 } opcode_out_t;
 
-`endif
+endpackage

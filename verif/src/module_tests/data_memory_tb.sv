@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module data_memory_tb;
-    `include "control_types.sv"
+    import control_types_pkg::*;
 
     logic        clk;
     logic        wr_en;

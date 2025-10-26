@@ -1,4 +1,5 @@
-module hazard_unit (
+module hazard_unit
+(
     // Inputs from ID stage
     input logic [4:0]   id_reg1_idx,
     input logic [4:0]   id_reg2_idx,

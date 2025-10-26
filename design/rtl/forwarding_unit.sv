@@ -1,6 +1,6 @@
-`include "control_types.sv"
-
-module forwarding_unit (
+module forwarding_unit 
+    import control_types_pkg::*;
+(
     // Inputs from EX stage
     input  logic [4:0] ex_reg1_idx,
     input  logic [4:0] ex_reg2_idx,
