@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module branch_tb;
+module branch_unit_tb;
     `include "control_types.sv"
 
     logic [31:0] operand_a;
